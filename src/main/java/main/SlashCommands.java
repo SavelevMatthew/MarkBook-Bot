@@ -1,3 +1,5 @@
+package main;
+
 import org.telegram.telegrambots.api.methods.ParseMode;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 

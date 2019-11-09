@@ -1,3 +1,5 @@
+package main;
+
 import org.telegram.telegrambots.*;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
