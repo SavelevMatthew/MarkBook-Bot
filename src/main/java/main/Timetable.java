@@ -64,11 +64,29 @@ public class Timetable {
 
     public static String createTimetable(int dayShift) {
         final Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Asia/Yekaterinburg"));
-        String date = (c.get(Calendar.DAY_OF_MONTH)+dayShift) + intToMonth.get(c.get(Calendar.MONTH));
-        String timetable = String.format(dayNumberToText.get(c.get(Calendar.DAY_OF_WEEK)+dayShift), date);
-        if (dayShift == 1) {
-            timetable = timetable.replace("Сегодня", "Завтра");
+        final Calendar editedCalendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Yekaterinburg"));
+        c.add(Calendar.DATE, dayShift);
+        editedCalendar.add(Calendar.DATE, dayShift);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        int month = c.get(Calendar.MONTH);
+        int dayOfMonth = c.get(Calendar.DAY_OF_MONTH);
+
+        dayShift = 0;
+        while (dayNumberToText.get(editedCalendar.get(Calendar.DAY_OF_WEEK)) == "null")
+        {
+
+            dayShift += 1;
+            editedCalendar.add(Calendar.DATE, dayShift);
         }
+
+        String timetable = "";
+        if (dayShift != 0)
+        {
+            c.add(Calendar.DATE, dayShift);
+            timetable = "___" + dayOfMonth + intToMonth.get(month) + " занятий нет. Расписание на ближайший день:___\n\n";
+        }
+        String date = (dayOfMonth+dayShift) + intToMonth.get(month);
+        timetable = timetable + String.format(dayNumberToText.get(dayOfWeek+dayShift), date);
         return timetable;
     }
 }
