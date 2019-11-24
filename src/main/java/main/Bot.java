@@ -5,8 +5,11 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Scanner;
 
 public class Bot extends TelegramLongPollingBot {
     private static Logger log = Logger.getLogger(Bot.class.getName());
@@ -14,18 +17,20 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         String message = update.getMessage().getText();
-        String chatId = update.getMessage().getChatId().toString();
+        String userId = update.getMessage().getChatId().toString();
+        UserInfo user = SQLCommands.GetUserInfo(Integer.parseInt(userId));
+        if (user.status.equals("not_exists")) {
+            user.status = UserStatus.HELLO;
+            SQLCommands.AddUserToSQL(user);
+        }
+        user.msg_text = message;
+
         SendMessage sendMessage = new SendMessage();
 
-        switch (message) {
-            case "Расписание на сегодня":   sendMessage = TextCommands.getTimetabletext(chatId, 0);
-                                            break;
-            case "Расписание на завтра":    sendMessage = TextCommands.getTimetabletext(chatId, 1);
-                                            break;
-            case "/start":                  sendMessage = SlashCommands.slashCommand(chatId, message);
-                                            break;
-            case "/help":                   sendMessage = SlashCommands.slashCommand(chatId, message);
-                                            break;
+        switch (user.status) {
+            case "hello":   sendMessage = Registration.RegisterUser(user); break;
+            case "get_group_id":   sendMessage = Registration.AddUserToGroup(user); break;
+            case "default" : sendMessage = BotCommands.FromMainMenu(user); break;
         }
 
         try {
@@ -37,11 +42,35 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "mrkbkbot";
+        try
+        {
+            Scanner sc = new Scanner(new File("C:\\Users\\user\\IdeaProjects\\Markbook-Bot\\src\\main\\java\\main\\config"));
+            String [] splitted;
+            while(sc.hasNext()) {
+                splitted = sc.nextLine().split(" ");
+                return splitted[0];
+            }
+        } catch (FileNotFoundException e) {
+            log.log(Level.SEVERE, "Exception: ", e.toString());
+        }
+
+        return "";
     }
 
     @Override
     public String getBotToken() {
-        return "1056249032:AAG_2jXkoZoc4NL9VZzMsd_-FaORDY8XmKo";
+        try
+        {
+            Scanner sc = new Scanner(new File("C:\\Users\\user\\IdeaProjects\\Markbook-Bot\\src\\main\\java\\main\\config"));
+            String [] splitted;
+            while(sc.hasNext()) {
+                splitted = sc.nextLine().split(" ");
+                return splitted[1];
+            }
+        } catch (FileNotFoundException e) {
+            log.log(Level.SEVERE, "Exception: ", e.toString());
+        }
+
+        return "";
     }
 }
