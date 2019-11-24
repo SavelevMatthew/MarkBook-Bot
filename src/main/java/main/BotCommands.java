@@ -1,7 +1,6 @@
 package main;
 
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.User;
 
 public class BotCommands {
     public static SendMessage FromMainMenu(UserInfo user) {

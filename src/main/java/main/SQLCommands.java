@@ -1,7 +1,5 @@
 package main;
 
-import org.telegram.telegrambots.api.objects.User;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;

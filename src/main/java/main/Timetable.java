@@ -40,12 +40,14 @@ public class Timetable {
 
         final Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Asia/Yekaterinburg"));
         c.add(Calendar.DATE, dayShift);
-        String dayOfWeek = dayNumberToText.get(c.get(Calendar.DAY_OF_WEEK));
-        String timetable = String.format("***%s, %d %s***\n",
-                dayOfWeek,
-                c.get(Calendar.DAY_OF_MONTH),
-                intToMonth.get(c.get(Calendar.MONTH)));
-        ArrayList<String> lessonList = SQLCommands.GetLessonList(user, dayOfWeek);
+
+        String weekDay = dayNumberToText.get(c.get(Calendar.DAY_OF_WEEK));
+        int date = c.get(Calendar.DAY_OF_MONTH);
+        String month = intToMonth.get(c.get(Calendar.MONTH));
+
+        String timetable = String.format("***%s, %d %s***\n", weekDay, date, month);
+
+        ArrayList<String> lessonList = SQLCommands.GetLessonList(user, weekDay);
         if (lessonList.size() == 0) {
             timetable = timetable + "\n___Нет занятий___";
         }
