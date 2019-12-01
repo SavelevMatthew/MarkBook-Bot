@@ -5,33 +5,35 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 
 import java.util.*;
 
+import static java.util.Map.entry;
+
 public class Timetable {
 
 
-    private static Map<Integer, String> dayNumberToText = new HashMap<>(){{
-        put(2, "Понедельник");
-        put(3, "Вторник");
-        put(4, "Среда");
-        put(5, "Четверг");
-        put(6, "Пятница");
-        put(7, "Суббота");
-        put(1, "Воскресенье");
-    }};
+    final private static Map<Integer, String> dayNumberToText = Map.ofEntries(
+        entry(2, "Понедельник"),
+        entry(3, "Вторник"),
+        entry(4, "Среда"),
+        entry(5, "Четверг"),
+        entry(6, "Пятница"),
+        entry(7, "Суббота"),
+        entry(1, "Воскресенье")
+    );
 
-    private static Map<Integer, String> intToMonth = new HashMap<>(){{
-        put(0, "января");
-        put(1, "февраля");
-        put(2, "марта");
-        put(3, "апреля");
-        put(4, "мая");
-        put(5, "июня");
-        put(6, "июля");
-        put(7, "августа");
-        put(8, "сентября");
-        put(9, "октября");
-        put(10, "ноября");
-        put(11, "декабря");
-    }};
+    final private static Map<Integer, String> intToMonth = Map.ofEntries(
+            entry(0, "января"),
+            entry(1, "февраля"),
+            entry(2, "марта"),
+            entry(3, "апреля"),
+            entry(4, "мая"),
+            entry(5, "июня"),
+            entry(6, "июля"),
+            entry(7, "августа"),
+            entry(8, "сентября"),
+            entry(9, "октября"),
+            entry(10, "ноября"),
+            entry(11, "декабря")
+        );
 
     public static SendMessage getTimetable(UserInfo user, int dayShift) {
         SendMessage msg = new SendMessage();
@@ -48,7 +50,7 @@ public class Timetable {
         String timetable = String.format("***%s, %d %s***\n", weekDay, date, month);
 
         ArrayList<String> lessonList = SQLCommands.GetLessonList(user, weekDay);
-        if (lessonList.size() == 0) {
+        if (lessonList.isEmpty()) {
             timetable = timetable + "\n___Нет занятий___";
         }
         else {

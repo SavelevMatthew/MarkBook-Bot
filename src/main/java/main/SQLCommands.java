@@ -2,6 +2,8 @@ package main;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -9,8 +11,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SQLCommands {
-    public static Connection GetSQLConnection() throws java.sql.SQLException {
-        Logger log = Logger.getLogger(Bot.class.getName());
+    final private static Logger SQLLogger = Logger.getLogger(Bot.class.getName());
+
+    private static Connection GetSQLConnection() throws java.sql.SQLException {
+
 
         String url = "";
         String user = "";
@@ -18,7 +22,8 @@ public class SQLCommands {
 
         try
         {
-            Scanner sc = new Scanner(new File("C:\\Users\\user\\IdeaProjects\\Markbook-Bot\\src\\main\\java\\main\\sql_config"));
+            Path path = Paths.get(System.getProperty("user.dir"), "src", "main", "java", "main", "resources", "sql_config");
+            Scanner sc = new Scanner(new File(path.toString()));
             String [] splitted;
             while(sc.hasNext()) {
                 splitted = sc.nextLine().split(" ");
@@ -27,7 +32,7 @@ public class SQLCommands {
                 password = splitted[2];
             }
         } catch (FileNotFoundException e) {
-            log.log(Level.SEVERE, "Exception: ", e.toString());
+            SQLLogger.log(Level.SEVERE, "Exception: ", e.toString());
         }
 
         return DriverManager.getConnection(url, user, password);
@@ -46,9 +51,7 @@ public class SQLCommands {
                 user.groupId = rs.getInt(2);
             }
         } catch (SQLException ex) {
-
-            Logger lgr = Logger.getLogger(Main.class.getName());
-            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
         }
 
         return user;
@@ -63,8 +66,7 @@ public class SQLCommands {
             pst.setString(2, user.status);
             pst.executeUpdate();
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(Main.class.getName());
-            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 
@@ -77,8 +79,7 @@ public class SQLCommands {
             pst.setInt(2, user.userId);
             pst.executeUpdate();
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(Main.class.getName());
-            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 
@@ -94,9 +95,7 @@ public class SQLCommands {
                 result = rs.getString(3);
             }
         } catch (SQLException ex) {
-
-            Logger lgr = Logger.getLogger(Main.class.getName());
-            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
         }
 
         return result;
@@ -111,8 +110,7 @@ public class SQLCommands {
             pst.setInt(2, user.userId);
             pst.executeUpdate();
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(Main.class.getName());
-            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 
@@ -132,9 +130,7 @@ public class SQLCommands {
             }
 
         } catch (SQLException ex) {
-
-            Logger lgr = Logger.getLogger(Main.class.getName());
-            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return result;
     }
