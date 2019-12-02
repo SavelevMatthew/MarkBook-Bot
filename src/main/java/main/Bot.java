@@ -21,7 +21,7 @@ public class Bot extends TelegramLongPollingBot {
         String message = update.getMessage().getText();
         String userId = update.getMessage().getChatId().toString();
         UserInfo user = SQLCommands.GetUserInfo(Integer.parseInt(userId));
-        if ("not_exists".equals(user.status)) {
+        if (user.status == UserStatus.NOT_EXISTS) {
             user.status = UserStatus.HELLO;
             SQLCommands.AddUserToSQL(user);
         }
@@ -30,13 +30,13 @@ public class Bot extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
 
         switch (user.status) {
-            case "hello":
+            case HELLO:
                 sendMessage = Registration.RegisterUser(user);
                 break;
-            case "get_group_id":
+            case GET_GROUPID:
                 sendMessage = Registration.AddUserToGroup(user);
                 break;
-            case "default":
+            case DEFAULT:
                 sendMessage = BotCommands.FromMainMenu(user);
                 break;
         }
@@ -53,7 +53,7 @@ public class Bot extends TelegramLongPollingBot {
             Path path = Paths.get(System.getProperty("user.dir"), "src", "main", "java", "main", "resources", "config");
             Scanner sc = new Scanner(new File(path.toString()));
             String[] splitted;
-            while (sc.hasNext()) {
+            if (sc.hasNext()) {
                 splitted = sc.nextLine().split(" ");
                 return splitted[parameter];
             }

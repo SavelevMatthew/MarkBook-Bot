@@ -33,7 +33,7 @@ public class Registration {
         msg.setText("Отправь код группы:");
         msg.setChatId((long) user.userId);
         msg.setReplyMarkup(new ReplyKeyboardRemove());
-        user.status = UserStatus.GETGROUPID;
+        user.status = UserStatus.GET_GROUPID;
         SQLCommands.UpdateUserStatus(user);
         return msg;
     }

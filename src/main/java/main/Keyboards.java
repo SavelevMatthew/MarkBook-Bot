@@ -11,7 +11,7 @@ import java.util.List;
 public class Keyboards {
     public static synchronized void StartRegistration(SendMessage sendMessage) {
         ArrayList<String> buttonTexts = new ArrayList<>();
-        buttonTexts.add("Создать группу");
+//        buttonTexts.add("Создать группу");
         buttonTexts.add("Присоединиться к существующей группе");
 
         ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);

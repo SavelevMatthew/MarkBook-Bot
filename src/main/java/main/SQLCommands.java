@@ -25,7 +25,7 @@ public class SQLCommands {
             Path path = Paths.get(System.getProperty("user.dir"), "src", "main", "java", "main", "resources", "sql_config");
             Scanner sc = new Scanner(new File(path.toString()));
             String [] splitted;
-            while(sc.hasNext()) {
+            if (sc.hasNext()) {
                 splitted = sc.nextLine().split(" ");
                 url = splitted[0];
                 user = splitted[1];
@@ -40,14 +40,14 @@ public class SQLCommands {
 
     public static UserInfo GetUserInfo(int userId) {
         String query = "select * from users where id = ?;";
-        UserInfo user = new UserInfo(userId, "not_exists", "");
+        UserInfo user = new UserInfo(userId, UserStatus.NOT_EXISTS, "");
 
         try (Connection con = SQLCommands.GetSQLConnection();
              PreparedStatement pst = con.prepareStatement(query)) {
             pst.setInt(1, userId);
             ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
-                user.status = rs.getString(3);
+            if (rs.next()) {
+                user.status = UserStatus.valueOf(rs.getString(3));
                 user.groupId = rs.getInt(2);
             }
         } catch (SQLException ex) {
@@ -63,7 +63,7 @@ public class SQLCommands {
         try (Connection con = SQLCommands.GetSQLConnection();
              PreparedStatement pst = con.prepareStatement(query)) {
             pst.setInt(1, user.userId);
-            pst.setString(2, user.status);
+            pst.setString(2, user.status.toString());
             pst.executeUpdate();
         } catch (SQLException ex) {
             SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -75,7 +75,7 @@ public class SQLCommands {
 
         try (Connection con = SQLCommands.GetSQLConnection();
              PreparedStatement pst = con.prepareStatement(query)) {
-            pst.setString(1, user.status);
+            pst.setString(1, user.status.toString());
             pst.setInt(2, user.userId);
             pst.executeUpdate();
         } catch (SQLException ex) {
@@ -91,7 +91,7 @@ public class SQLCommands {
              PreparedStatement pst = con.prepareStatement(query)) {
             pst.setInt(1, groupId);
             ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 result = rs.getString(3);
             }
         } catch (SQLException ex) {
