@@ -1,12 +1,16 @@
 package main;
 
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageReplyMarkup;
+import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.api.objects.CallbackQuery;
+import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Keyboards {
     public static synchronized void StartRegistration(SendMessage sendMessage) {
@@ -79,5 +83,34 @@ public class Keyboards {
         }
         replyKeyboardMarkup.setKeyboard(keyboard);
         return replyKeyboardMarkup;
+    }
+
+    public static InlineKeyboardMarkup InlineButton(CallbackQuery callbackQuery) {
+//        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+//        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+//        List<InlineKeyboardButton> row = new ArrayList<>();
+//        switch(callbackQuery.getData()) {
+//            case "hw": row.add(new InlineKeyboardButton("⬅️ Вернуться к расписанию")); break;
+//            case "tt": row.add(new InlineKeyboardButton("Домашнее задание")); break;
+//        }
+//
+//        keyboard.add(row);
+//
+//        inlineKeyboardMarkup.setKeyboard(keyboard);
+//
+//        return inlineKeyboardMarkup;
+
+        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        InlineKeyboardMarkup inlineKeyboardMarkup =new InlineKeyboardMarkup();
+
+        switch (callbackQuery.getData()) {
+            case "hw": keyboardButtonsRow.add(new InlineKeyboardButton().setText("⬅️ Вернуться к расписанию").setCallbackData("tt")); break;
+            case "tt": keyboardButtonsRow.add(new InlineKeyboardButton().setText("Домашнее задание").setCallbackData("hw")); break;
+        }
+
+        List<List<InlineKeyboardButton>> rowList= new ArrayList<>();
+        rowList.add(keyboardButtonsRow);
+        inlineKeyboardMarkup.setKeyboard(rowList);
+        return  inlineKeyboardMarkup;
     }
 }

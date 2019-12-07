@@ -1,5 +1,6 @@
 package main;
 
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.User;
 
 import java.io.File;

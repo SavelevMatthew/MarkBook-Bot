@@ -1,6 +1,8 @@
 package main;
 
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.CallbackQuery;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -21,26 +23,28 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        String message = update.getMessage().getText();
+        CallbackQuery callbackQuery = update.getCallbackQuery();
+        if (null != callbackQuery) {
+            String userId = callbackQuery.getMessage().getChatId().toString();
+            UserInfo user = SQLCommands.GetUserInfo(Integer.parseInt(userId));
+            try {
+                execute(CallbackHandler.StartHandling(callbackQuery, user));
+            } catch (TelegramApiException e) {
+                BotLogger.log(Level.SEVERE, "Exception: ", e.toString());
+            }
+            return;
+
+        }
+
         String userId = update.getMessage().getChatId().toString();
         UserInfo user = SQLCommands.GetUserInfo(Integer.parseInt(userId));
         if (user.status == UserStatus.NOT_EXISTS) {
             user.status = UserStatus.HELLO;
             SQLCommands.AddUserToSQL(user);
         }
-        user.msg_text = message;
+        user.msg_text = update.getMessage().getText();
 
         SendMessage sendMessage = new SendMessage();
-
-//        if(Arrays.asList(UserStatus.GET_LESSON1,
-//                UserStatus.GET_LESSON2,
-//                UserStatus.GET_LESSON3,
-//                UserStatus.GET_LESSON4,
-//                UserStatus.GET_LESSON5,
-//                UserStatus.GET_LESSON6,
-//                UserStatus.GET_LESSON7).contains(user.status)) {
-//            sendMessage = Registration.UpdateTimetable(user);
-//        }
 
         switch (user.status) {
             case HELLO:
