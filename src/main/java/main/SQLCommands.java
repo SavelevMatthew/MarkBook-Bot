@@ -1,5 +1,7 @@
 package main;
 
+import org.telegram.telegrambots.api.objects.User;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -40,7 +42,7 @@ public class SQLCommands {
 
     public static UserInfo GetUserInfo(int userId) {
         String query = "select * from users where id = ?;";
-        UserInfo user = new UserInfo(userId, UserStatus.NOT_EXISTS, "");
+        UserInfo user = new UserInfo(userId, UserStatus.NOT_EXISTS, "", false);
 
         try (Connection con = SQLCommands.GetSQLConnection();
              PreparedStatement pst = con.prepareStatement(query)) {
@@ -49,6 +51,8 @@ public class SQLCommands {
             if (rs.next()) {
                 user.status = UserStatus.valueOf(rs.getString(3));
                 user.groupId = rs.getInt(2);
+                user.isAdmin = rs.getBoolean(4);
+                user.properties = rs.getString(5);
             }
         } catch (SQLException ex) {
             SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -70,13 +74,16 @@ public class SQLCommands {
         }
     }
 
-    public static void UpdateUserStatus(UserInfo user) {
-        String query = "UPDATE users SET status = ? WHERE id = ?";
+    public static void UpdateUserInfo(UserInfo user) {
+        String query = "UPDATE users SET groupid = ?, status = ?, properties = ?, isadmin = ?  WHERE id = ?";
 
         try (Connection con = SQLCommands.GetSQLConnection();
              PreparedStatement pst = con.prepareStatement(query)) {
-            pst.setString(1, user.status.toString());
-            pst.setInt(2, user.userId);
+            pst.setInt(1, user.groupId);
+            pst.setString(2, user.status.toString());
+            pst.setString(3, user.properties);
+            pst.setBoolean(4, user.isAdmin);
+            pst.setInt(5, user.userId);
             pst.executeUpdate();
         } catch (SQLException ex) {
             SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -101,20 +108,7 @@ public class SQLCommands {
         return result;
     }
 
-    public static void UpdateUserGroup(UserInfo user) {
-        String query = "UPDATE users SET groupId = ? WHERE id = ?";
-
-        try (Connection con = SQLCommands.GetSQLConnection();
-             PreparedStatement pst = con.prepareStatement(query)) {
-            pst.setInt(1, user.groupId);
-            pst.setInt(2, user.userId);
-            pst.executeUpdate();
-        } catch (SQLException ex) {
-            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
-        }
-    }
-
-    public static ArrayList<String> GetLessonList(UserInfo user, String dayOfWeek) {
+    public static ArrayList<String> GetLessonListByWeekDay(UserInfo user, String dayOfWeek) {
         ArrayList<String> result = new ArrayList<>();
         String query = "select * from timetable where groupid = ? and weekday = ?";
 
@@ -133,5 +127,126 @@ public class SQLCommands {
             SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return result;
+    }
+
+    public static ArrayList<String> GetLessonList(UserInfo user) {
+        ArrayList<String> result = new ArrayList<>();
+        String query = "select * from hometasks where groupid = ?";
+
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setInt(1, user.groupId);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                result.add(rs.getString(2));
+            }
+
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return result;
+    }
+
+    public static void UpdateHometask(UserInfo user, String lesson, String hometask) {
+        String query = "UPDATE hometasks SET hometask_text = ? WHERE groupid = ? AND lesson = ?";
+
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setString(1, hometask);
+            pst.setInt(2, user.groupId);
+            pst.setString(3, lesson);
+            pst.executeUpdate();
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static void AddLesson(UserInfo user, String lesson) {
+        String query = "INSERT INTO hometasks(groupid, lesson, hometask_text) VALUES(?, ?, ?)";
+
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setInt(1, user.groupId);
+            pst.setString(2, lesson);
+            pst.setString(3, "Ничего не задано");
+            pst.executeUpdate();
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static String GetHometask(UserInfo user, String lesson) {
+        String query = "select * from hometasks where groupid = ? and lesson = ?;";
+        String hometask_text = "";
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setInt(1, user.groupId);
+            pst.setString(2, lesson);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                hometask_text = rs.getString(3);
+            }
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+
+        return hometask_text;
+    }
+
+    public static void InitTimetableDay(UserInfo user, String weekDay, String firstlesson) {
+        String query = "INSERT INTO timetable(groupid, weekday, firstlesson) VALUES(?, ?, ?)";
+
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setInt(1, user.groupId);
+            pst.setString(2, weekDay);
+            pst.setString(3, firstlesson);
+            pst.executeUpdate();
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static void UpdateTimetable(UserInfo user, String weekDay, int numLesson, String lesson) {
+        String query = String.format("UPDATE timetable SET lesson%d = ? WHERE groupid = ? and weekday = ?", numLesson);
+
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setString(1, lesson);
+            pst.setString(3, weekDay);
+            pst.setInt(2, user.groupId);
+            pst.executeUpdate();
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static void CreateNewGroup(UserInfo user, String groupName) {
+        String query = "select * from groups;";
+        int groupId = 1;
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                groupId += 1;
+            }
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+
+        user.groupId = groupId;
+        query = "INSERT INTO groups(groupid, groupname) VALUES(?, ?)";
+
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setString(2, groupName);
+            pst.setInt(1, user.groupId);
+            pst.executeUpdate();
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+
+        user.isAdmin = true;
+        UpdateUserInfo(user);
     }
 }

@@ -11,17 +11,55 @@ import java.util.List;
 public class Keyboards {
     public static synchronized void StartRegistration(SendMessage sendMessage) {
         ArrayList<String> buttonTexts = new ArrayList<>();
-//        buttonTexts.add("Создать группу");
+        buttonTexts.add("Создать группу");
         buttonTexts.add("Присоединиться к существующей группе");
 
         ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);
         sendMessage.setReplyMarkup(replyKeyboard);
     }
 
-    public static synchronized void MainMenu(SendMessage sendMessage) {
+    public static synchronized void EndRegistration(SendMessage sendMessage) {
+        ArrayList<String> buttonTexts = new ArrayList<>();
+        buttonTexts.add("✅ Завершить заполнение расписания");
+
+        ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);
+        sendMessage.setReplyMarkup(replyKeyboard);
+    }
+
+    public static synchronized void LessonList(UserInfo user, SendMessage msg, boolean backButton, boolean noLessonButton, boolean doneButton) {
+        ArrayList<String> lessonsList = SQLCommands.GetLessonList(user);
+
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
+        List<KeyboardRow> keyboard = new ArrayList<>();
+
+        if (backButton) { lessonsList.add("⬅️ Назад"); }
+        if (doneButton) { lessonsList.add("\uD83E\uDD37\u200D♂️ Окно"); }
+        if (noLessonButton) { lessonsList.add("✅ Готово"); }
+
+        for (int i = 0; i < lessonsList.size(); i+=2){
+            KeyboardRow row = new KeyboardRow();
+            row.add(new KeyboardButton(lessonsList.get(i)));
+            if (i+1 < lessonsList.size()) {
+                row.add(new KeyboardButton(lessonsList.get(i+1)));
+            }
+
+            keyboard.add(row);
+        }
+        replyKeyboardMarkup.setKeyboard(keyboard);
+        msg.setReplyMarkup(replyKeyboardMarkup);
+    }
+
+    public static synchronized void MainMenu(SendMessage sendMessage, boolean isAdmin) {
         ArrayList<String> buttonTexts = new ArrayList<>();
         buttonTexts.add("Расписание на сегодня");
         buttonTexts.add("Расписание на завтра");
+
+        if(isAdmin) {
+            buttonTexts.add("Добавить домашнее задание");
+        }
 
         ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);
         sendMessage.setReplyMarkup(replyKeyboard);

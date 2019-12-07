@@ -49,7 +49,7 @@ public class Timetable {
 
         String timetable = String.format("***%s, %d %s***\n", weekDay, date, month);
 
-        ArrayList<String> lessonList = SQLCommands.GetLessonList(user, weekDay);
+        ArrayList<String> lessonList = SQLCommands.GetLessonListByWeekDay(user, weekDay);
         if (lessonList.isEmpty()) {
             timetable = timetable + "\n___Нет занятий___";
         }
