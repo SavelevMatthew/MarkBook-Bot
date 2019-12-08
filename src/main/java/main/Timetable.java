@@ -57,6 +57,7 @@ class Timetable {
             timetable = timetable + "\n___Нет занятий___";
         }
         else {
+            timetable = timetable + String.format("___Учимся с %s пары___\n ", SQLCommands.GetFirstLessonNumber(user, weekDay));
             for (String lesson : lessonList) {
                 if(lesson != null) {
                     timetable = timetable + String.format("\n%s", lesson);

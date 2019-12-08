@@ -247,4 +247,23 @@ class SQLCommands {
         user.isAdmin = true;
         UpdateUserInfo(user);
     }
+
+    static String GetFirstLessonNumber(UserInfo user, String weekDay) {
+        ArrayList<String> result = new ArrayList<>();
+        String query = "select * from timetable where groupid = ? and weekday = ?";
+
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setInt(1, user.groupId);
+            pst.setString(2, weekDay);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                return rs.getString(3);
+            }
+
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return "0";
+    }
 }
