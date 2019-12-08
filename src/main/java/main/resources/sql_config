@@ -1,1 +1,1 @@
-jdbc:postgresql://ec2-107-20-234-175.compute-1.amazonaws.com:5432/d1fo2mmsiut1do?sslmode=require hhcsntllzljdzu 53d4491533a14aa952ec4b75c519dee8114f78555ac71118a5711fe13c168139
+jdbc:postgresql://localhost:5432/markbookbot postgres markpukpuk

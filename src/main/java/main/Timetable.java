@@ -50,13 +50,14 @@ class Timetable {
         int date = c.get(Calendar.DAY_OF_MONTH);
         String month = intToMonth.get(c.get(Calendar.MONTH));
 
-        String timetable = String.format("***%s, %d %s***\n ", weekDay, date, month);
+        String timetable = String.format("***%s, %d %s***\n", weekDay, date, month);
 
         ArrayList<String> lessonList = SQLCommands.GetLessonListByWeekDay(user, weekDay);
         if (lessonList.isEmpty()) {
             timetable = timetable + "\n___Нет занятий___";
         }
         else {
+            timetable = timetable + String.format("___Учимся с %s пары___\n ", SQLCommands.GetFirstLessonNumber(user, weekDay));
             for (String lesson : lessonList) {
                 if(lesson != null) {
                     timetable = timetable + String.format("\n%s", lesson);
