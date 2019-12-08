@@ -10,7 +10,7 @@ import java.util.*;
 
 import static java.util.Map.entry;
 
-public class Timetable {
+class Timetable {
 
 
     final private static Map<Integer, String> dayNumberToText = Map.ofEntries(
@@ -38,7 +38,7 @@ public class Timetable {
             entry(11, "декабря")
         );
 
-    public static SendMessage getTimetable(UserInfo user, int dayShift) {
+    static SendMessage getTimetable(UserInfo user, int dayShift) {
         SendMessage msg = new SendMessage();
         msg.setChatId((long)user.userId);
         msg.setParseMode(ParseMode.MARKDOWN);
@@ -76,7 +76,7 @@ public class Timetable {
         return msg;
     }
 
-    public static String GetHometaskByDay(UserInfo user, Message originalMsg) {
+    static String GetHometaskByDay(UserInfo user, Message originalMsg) {
         String [] lessons = originalMsg.getText().split("\n");
         String result = String.format("***%s***\n___%s___", lessons[0], lessons[1]);
         for (String lesson: lessons) {
@@ -88,7 +88,7 @@ public class Timetable {
         return result;
     }
 
-    public static String ReturnTimetableInEdited(UserInfo user, Message editedMsg) {
+    static String ReturnTimetableInEdited(UserInfo user, Message editedMsg) {
         ArrayList<String> lessons = SQLCommands.GetLessonList(user);
         String [] rawLessons = editedMsg.getText().split("\n");
         String result = String.format("***%s***\n___%s___", rawLessons[0], rawLessons[1]);

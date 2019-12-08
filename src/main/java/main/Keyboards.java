@@ -1,8 +1,6 @@
 package main;
 
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageReplyMarkup;
-import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -12,8 +10,8 @@ import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.*;
 
-public class Keyboards {
-    public static synchronized void StartRegistration(SendMessage sendMessage) {
+class Keyboards {
+    static synchronized void StartRegistration(SendMessage sendMessage) {
         ArrayList<String> buttonTexts = new ArrayList<>();
         buttonTexts.add("Создать группу");
         buttonTexts.add("Присоединиться к существующей группе");
@@ -22,7 +20,7 @@ public class Keyboards {
         sendMessage.setReplyMarkup(replyKeyboard);
     }
 
-    public static synchronized void EndRegistration(SendMessage sendMessage) {
+    static synchronized void EndRegistration(SendMessage sendMessage) {
         ArrayList<String> buttonTexts = new ArrayList<>();
         buttonTexts.add("✅ Завершить заполнение расписания");
 
@@ -30,7 +28,7 @@ public class Keyboards {
         sendMessage.setReplyMarkup(replyKeyboard);
     }
 
-    public static synchronized void LessonList(UserInfo user, SendMessage msg, boolean backButton, boolean noLessonButton, boolean doneButton) {
+    static synchronized void LessonList(UserInfo user, SendMessage msg, boolean backButton, boolean noLessonButton, boolean doneButton) {
         ArrayList<String> lessonsList = SQLCommands.GetLessonList(user);
 
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -56,7 +54,7 @@ public class Keyboards {
         msg.setReplyMarkup(replyKeyboardMarkup);
     }
 
-    public static synchronized void MainMenu(SendMessage sendMessage, boolean isAdmin) {
+    static synchronized void MainMenu(SendMessage sendMessage, boolean isAdmin) {
         ArrayList<String> buttonTexts = new ArrayList<>();
         buttonTexts.add("Расписание на сегодня");
         buttonTexts.add("Расписание на завтра");
@@ -85,7 +83,7 @@ public class Keyboards {
         return replyKeyboardMarkup;
     }
 
-    public static InlineKeyboardMarkup InlineButton(CallbackQuery callbackQuery) {
+    static InlineKeyboardMarkup InlineButton(CallbackQuery callbackQuery) {
 //        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 //        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
 //        List<InlineKeyboardButton> row = new ArrayList<>();

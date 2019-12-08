@@ -4,8 +4,8 @@ import org.telegram.telegrambots.api.methods.ParseMode;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 
-public class Registration {
-    public static SendMessage RegisterUser(UserInfo user) {
+class Registration {
+    static SendMessage RegisterUser(UserInfo user) {
         switch(user.msg_text) {
                     case "/start": return StartRegistration(user);
                     case "Создать группу": return RegisterGroup(user);
@@ -24,7 +24,7 @@ public class Registration {
         return msg;
     }
 
-    public static SendMessage RegisterGroup (UserInfo user) {
+    static SendMessage RegisterGroup(UserInfo user) {
         SendMessage msg = new SendMessage();
         msg.setChatId((long) user.userId);
         if(user.status == UserStatus.HELLO) {
@@ -43,7 +43,7 @@ public class Registration {
         return msg;
     }
 
-    public static SendMessage SetFirstLesson(UserInfo user) {
+    static SendMessage SetFirstLesson(UserInfo user) {
         SendMessage msg = new SendMessage();
         msg.setParseMode(ParseMode.MARKDOWN);
         msg.setChatId((long)user.userId);
@@ -77,7 +77,7 @@ public class Registration {
         return msg;
     }
 
-    public static SendMessage UpdateTimetable(UserInfo user) {
+    static SendMessage UpdateTimetable(UserInfo user) {
         SendMessage msg = new SendMessage();
         msg.setChatId((long)user.userId);
         msg.setParseMode(ParseMode.MARKDOWN);
@@ -147,7 +147,7 @@ public class Registration {
         return msg;
     }
 
-    public static SendMessage AddUserToGroup(UserInfo user) {
+    static SendMessage AddUserToGroup(UserInfo user) {
         SendMessage msg = new SendMessage();
         msg.setChatId((long)user.userId);
         int groupId;

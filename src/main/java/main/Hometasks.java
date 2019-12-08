@@ -3,8 +3,8 @@ package main;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 
-public class Hometasks {
-    public static SendMessage UpdateHometask(UserInfo user) {
+class Hometasks {
+    static SendMessage UpdateHometask(UserInfo user) {
         SendMessage msg = new SendMessage();
         msg.setChatId((long)user.userId);
         switch(user.status) {

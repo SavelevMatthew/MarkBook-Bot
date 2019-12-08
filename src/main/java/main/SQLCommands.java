@@ -1,8 +1,5 @@
 package main;
 
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.User;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -13,7 +10,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SQLCommands {
+class SQLCommands {
     final private static Logger SQLLogger = Logger.getLogger(Bot.class.getName());
 
     private static Connection GetSQLConnection() throws java.sql.SQLException {
@@ -41,7 +38,7 @@ public class SQLCommands {
         return DriverManager.getConnection(url, user, password);
     }
 
-    public static UserInfo GetUserInfo(int userId) {
+    static UserInfo GetUserInfo(int userId) {
         String query = "select * from users where id = ?;";
         UserInfo user = new UserInfo(userId, UserStatus.NOT_EXISTS, "", false);
 
@@ -62,7 +59,7 @@ public class SQLCommands {
         return user;
     }
 
-    public static void AddUserToSQL(UserInfo user) {
+    static void AddUserToSQL(UserInfo user) {
         String query = "INSERT INTO users(id, status) VALUES(?, ?)";
 
         try (Connection con = SQLCommands.GetSQLConnection();
@@ -75,7 +72,7 @@ public class SQLCommands {
         }
     }
 
-    public static void UpdateUserInfo(UserInfo user) {
+    static void UpdateUserInfo(UserInfo user) {
         String query = "UPDATE users SET groupid = ?, status = ?, properties = ?, isadmin = ?  WHERE id = ?";
 
         try (Connection con = SQLCommands.GetSQLConnection();
@@ -91,7 +88,7 @@ public class SQLCommands {
         }
     }
 
-    public static String GetGroupName(int groupId) {
+    static String GetGroupName(int groupId) {
         String query = "select * from groups where groupid = ?";
         String result = "null";
 
@@ -109,7 +106,7 @@ public class SQLCommands {
         return result;
     }
 
-    public static ArrayList<String> GetLessonListByWeekDay(UserInfo user, String dayOfWeek) {
+    static ArrayList<String> GetLessonListByWeekDay(UserInfo user, String dayOfWeek) {
         ArrayList<String> result = new ArrayList<>();
         String query = "select * from timetable where groupid = ? and weekday = ?";
 
@@ -130,7 +127,7 @@ public class SQLCommands {
         return result;
     }
 
-    public static ArrayList<String> GetLessonList(UserInfo user) {
+    static ArrayList<String> GetLessonList(UserInfo user) {
         ArrayList<String> result = new ArrayList<>();
         String query = "select * from hometasks where groupid = ?";
 
@@ -148,7 +145,7 @@ public class SQLCommands {
         return result;
     }
 
-    public static void UpdateHometask(UserInfo user, String lesson, String hometask) {
+    static void UpdateHometask(UserInfo user, String lesson, String hometask) {
         String query = "UPDATE hometasks SET hometask_text = ? WHERE groupid = ? AND lesson = ?";
 
         try (Connection con = SQLCommands.GetSQLConnection();
@@ -162,7 +159,7 @@ public class SQLCommands {
         }
     }
 
-    public static void AddLesson(UserInfo user, String lesson) {
+    static void AddLesson(UserInfo user, String lesson) {
         String query = "INSERT INTO hometasks(groupid, lesson, hometask_text) VALUES(?, ?, ?)";
 
         try (Connection con = SQLCommands.GetSQLConnection();
@@ -176,7 +173,7 @@ public class SQLCommands {
         }
     }
 
-    public static String GetHometask(UserInfo user, String lesson) {
+    static String GetHometask(UserInfo user, String lesson) {
         String query = "select * from hometasks where groupid = ? and lesson = ?;";
         String hometask_text = "";
         try (Connection con = SQLCommands.GetSQLConnection();
@@ -194,7 +191,7 @@ public class SQLCommands {
         return hometask_text;
     }
 
-    public static void InitTimetableDay(UserInfo user, String weekDay, String firstlesson) {
+    static void InitTimetableDay(UserInfo user, String weekDay, String firstlesson) {
         String query = "INSERT INTO timetable(groupid, weekday, firstlesson) VALUES(?, ?, ?)";
 
         try (Connection con = SQLCommands.GetSQLConnection();
@@ -208,7 +205,7 @@ public class SQLCommands {
         }
     }
 
-    public static void UpdateTimetable(UserInfo user, String weekDay, int numLesson, String lesson) {
+    static void UpdateTimetable(UserInfo user, String weekDay, int numLesson, String lesson) {
         String query = String.format("UPDATE timetable SET lesson%d = ? WHERE groupid = ? and weekday = ?", numLesson);
 
         try (Connection con = SQLCommands.GetSQLConnection();
@@ -222,7 +219,7 @@ public class SQLCommands {
         }
     }
 
-    public static void CreateNewGroup(UserInfo user, String groupName) {
+    static void CreateNewGroup(UserInfo user, String groupName) {
         String query = "select * from groups;";
         int groupId = 1;
         try (Connection con = SQLCommands.GetSQLConnection();

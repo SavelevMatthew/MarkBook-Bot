@@ -1,13 +1,12 @@
 package main;
 
 import org.telegram.telegrambots.api.methods.ParseMode;
-import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Message;
 
-public class CallbackHandler {
-    public static EditMessageText StartHandling(CallbackQuery callbackQuery, UserInfo user) {
+class CallbackHandler {
+    static EditMessageText StartHandling(CallbackQuery callbackQuery, UserInfo user) {
         String data = callbackQuery.getData();
         switch(data) {
             case "hw": return EditTimetableToHometask(callbackQuery, user);

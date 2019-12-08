@@ -1,18 +1,17 @@
 package main;
 
-public class UserInfo {
-    public int userId;
-    public int schoolId;
-    public int groupId;
-    public UserStatus status;
-    public String msg_text;
-    public String properties;
-    public boolean isAdmin;
+class UserInfo {
+    int userId;
+    int groupId;
+    UserStatus status;
+    String msg_text;
+    String properties;
+    boolean isAdmin;
 
     UserInfo(int id, UserStatus status, String msg_text, boolean isAdmin)
     {
         userId = id;
-        schoolId = -1;
+        int schoolId = -1;
         groupId = -1;
         this.status = status;
         this.msg_text = msg_text;
