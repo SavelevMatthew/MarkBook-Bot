@@ -11,6 +11,7 @@ public class Settings {
             case "Добавить файл": return BotCommands.NotImplementedYet(user);
             case "Получить код группы": return Settings.GetGroupCode(user);
             case "/start": return BotCommands.ReturnToMainMenu(user);
+            case "Отправить сообщение всем администраторам": return BotCommands.NotImplementedYet(user);
             case "⬅️ Вернуться в главное меню": return BotCommands.ReturnToMainMenu(user);
         }
         return new SendMessage();
@@ -22,7 +23,7 @@ public class Settings {
 
         if (user.isAdmin) {
             msg.setText("Настройки");
-            Keyboards.Settings(msg);
+            Keyboards.Settings(user.userId, msg);
             user.status = UserStatus.SETTINGS;
             SQLCommands.UpdateUserInfo(user);
             return msg;

@@ -107,12 +107,15 @@ class Keyboards {
         sendMessage.setReplyMarkup(replyKeyboard);
     }
 
-    static synchronized void Settings(SendMessage sendMessage) {
+    static synchronized void Settings(long userid, SendMessage sendMessage) {
         ArrayList<String> buttonTexts = new ArrayList<>();
         buttonTexts.add("Добавить домашнее задание");
         buttonTexts.add("Редактировать расписание");
         buttonTexts.add("Добавить файл");
         buttonTexts.add("Получить код группы");
+        if (userid==409216737) {
+            buttonTexts.add("Отправить сообщение всем администраторам");
+        }
         buttonTexts.add("⬅️ Вернуться в главное меню");
 
         ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);
