@@ -8,7 +8,7 @@ class Hometasks {
         SendMessage msg = new SendMessage();
         msg.setChatId((long)user.userId);
         switch(user.status) {
-            case DEFAULT: {
+            case SETTINGS: {
                 msg.setText("Выбери предмет из списка:");
                 Keyboards.LessonList(user, msg, true, false, false);
                 user.status = UserStatus.GET_LESSON_NAME;

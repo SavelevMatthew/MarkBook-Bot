@@ -110,6 +110,9 @@ public class Bot extends TelegramLongPollingBot {
             case GET_HOMETASK:
                 sendMessage = Hometasks.UpdateHometask(user);
                 break;
+            case SETTINGS:
+                sendMessage = Settings.FromSettings(user);
+                break;
         }
 
         try {

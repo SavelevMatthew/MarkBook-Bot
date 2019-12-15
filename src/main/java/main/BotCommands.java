@@ -8,7 +8,9 @@ class BotCommands {
         switch(user.msg_text) {
             case "Расписание на сегодня": return Timetable.getTimetable(user, 0);
             case "Расписание на завтра": return Timetable.getTimetable(user, 1);
-            case "Добавить домашнее задание": return Hometasks.UpdateHometask(user);
+            case "Все домашние задания": return NotImplementedYet(user);
+            case "Настройки": return Settings.OpenSettings(user);
+            case "/start": return ReturnToMainMenu(user);
         }
         return new SendMessage();
     }
@@ -47,6 +49,24 @@ class BotCommands {
         user.properties = user.status.toString() + '|' + user.properties;
         user.status = UserStatus.GET_SUPPORT_TEXT;
         SQLCommands.UpdateUserInfo(user);
+        return msg;
+    }
+
+    static SendMessage ReturnToMainMenu(UserInfo user) {
+        SendMessage msg = new SendMessage();
+        msg.setChatId((long)user.userId);
+        user.status = UserStatus.DEFAULT;
+        msg.setText("Главное меню");
+        Keyboards.MainMenu(msg, user.isAdmin);
+        SQLCommands.UpdateUserInfo(user);
+        return msg;
+    }
+
+    static SendMessage NotImplementedYet(UserInfo user) {
+        SendMessage msg = new SendMessage();
+        msg.setParseMode(ParseMode.MARKDOWN);
+        msg.setText("\uD83E\uDD37\u200D♂️ Эта функция пока не реализована, но скоро появится");
+        msg.setChatId((long) user.userId);
         return msg;
     }
 }

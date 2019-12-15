@@ -150,25 +150,23 @@ class Registration {
     static SendMessage AddUserToGroup(UserInfo user) {
         SendMessage msg = new SendMessage();
         msg.setChatId((long)user.userId);
-        int groupId;
-        try {
-            groupId = Integer.parseInt(user.msg_text);
-        } catch(NumberFormatException e){
-            msg.setText("Неправильный код группы. Попробуй ещё раз:");
-            return msg;
-        }
-        String groupName = SQLCommands.GetGroupName(groupId);
+        String groupCode = user.msg_text;
 
-        if (!groupName.equals("null")) {
-            user.groupId = groupId;
-            user.status = UserStatus.DEFAULT;
-            SQLCommands.UpdateUserInfo(user);
-        } else {
+        String groupInfo = SQLCommands.GetGroupName(groupCode);
+        if ("-1 ".equals(groupInfo)) {
             msg.setText("Неправильный код группы. Попробуй ещё раз:");
             return msg;
         }
+
+        String[] splitted = groupInfo.split("!");
+        user.groupId = Integer.parseInt(splitted[0]);
+        user.groupCode = user.msg_text;
+        user.status = UserStatus.DEFAULT;
+        String groupName = splitted[1];
+
         msg.setText(String.format("✅ Ты добавлен в группу %s", groupName));
         Keyboards.MainMenu(msg, user.isAdmin);
+        SQLCommands.UpdateUserInfo(user);
         return msg;
     }
 }

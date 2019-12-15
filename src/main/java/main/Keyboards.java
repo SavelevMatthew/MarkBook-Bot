@@ -58,10 +58,23 @@ class Keyboards {
         ArrayList<String> buttonTexts = new ArrayList<>();
         buttonTexts.add("Расписание на сегодня");
         buttonTexts.add("Расписание на завтра");
+        buttonTexts.add("Все домашние задания");
 
         if(isAdmin) {
-            buttonTexts.add("Добавить домашнее задание");
+            buttonTexts.add("Настройки");
         }
+
+        ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);
+        sendMessage.setReplyMarkup(replyKeyboard);
+    }
+
+    static synchronized void Settings(SendMessage sendMessage) {
+        ArrayList<String> buttonTexts = new ArrayList<>();
+        buttonTexts.add("Добавить домашнее задание");
+        buttonTexts.add("Редактировать расписание");
+        buttonTexts.add("Добавить файл");
+        buttonTexts.add("Получить код группы");
+        buttonTexts.add("⬅️ Вернуться в главное меню");
 
         ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);
         sendMessage.setReplyMarkup(replyKeyboard);
