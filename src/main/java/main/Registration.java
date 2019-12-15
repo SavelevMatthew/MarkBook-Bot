@@ -78,7 +78,7 @@ class Registration {
             return  msg;
         }
 
-        if (lessonNumber > 7) {
+        if (lessonNumber > 7 || lessonNumber < 1) {
             msg.setText("***⚠️Номер первой пары — это число от 1 до 7***\nОтправь номер первой пары ещё раз:");
             return  msg;
         }

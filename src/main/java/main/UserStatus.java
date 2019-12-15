@@ -1,10 +1,6 @@
 package main;
 
 public enum UserStatus {
-    //public static String HELLO = "hello"; // юзер впервые отправил боту /start
-    //public  static String GETGROUPID = "get_group_id"; // ждем от юзера код группы
-    //public static String DEFAULT = "default"; //главное меню
-
     HELLO("HELLO"),
     GET_GROUPID("GET_GROUPID"),
     DEFAULT("DEFAULT"),
@@ -32,7 +28,9 @@ public enum UserStatus {
     EDIT_FIRSTLESSON_NUMBER("EDIT_FIRSTLESSON_NUMBER"),
     GET_WEEKDAY("GET_WEEKDAY"),
     CLOSE_EDITING("CLOSE_EDITING"),
-    GET_WEEK_TYPE("GET_WEEK_TYPE");
+    GET_WEEK_TYPE("GET_WEEK_TYPE"),
+    GET_MSG_TO_ALL_ADMINS("GET_MSG_TO_ALL_ADMINS"),
+    APPROVE_SENDING_MSG_TO_ALL_ADMINS("APPROVE_SENDING_MSG_TO_ALL_ADMINS");
     private final String code;
 
     UserStatus(final String code) {

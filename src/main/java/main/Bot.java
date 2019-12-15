@@ -12,6 +12,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Scanner;
@@ -64,6 +67,9 @@ public class Bot extends TelegramLongPollingBot {
             return;
         }
 
+        boolean moreMessages = false;
+        List<SendMessage> messages = new ArrayList<>();
+
         switch (user.status) {
             case GET_SUPPORT_TEXT:
                 sendMessage = BotCommands.CallToSupport(user, update.getMessage().getFrom().getUserName());
@@ -110,9 +116,15 @@ public class Bot extends TelegramLongPollingBot {
             case GET_HOMETASK:
                 sendMessage = Hometasks.UpdateHometask(user);
                 break;
-            case SETTINGS:
-                sendMessage = Settings.FromSettings(user);
+            case SETTINGS: {
+                if ("Отправить сообщение всем администраторам".equals(user.msg_text)) {
+                    messages = Settings.SendToAllAdmins(user);
+                    moreMessages = true;
+                } else {
+                    sendMessage = Settings.FromSettings(user);
+                }
                 break;
+            }
             case EDIT_LESSON1:
                 sendMessage = Timetable.EditTimetable(user);
                 break;
@@ -146,6 +158,27 @@ public class Bot extends TelegramLongPollingBot {
             case GET_WEEK_TYPE:
                 sendMessage = Timetable.EditTimetable(user);
                 break;
+            case GET_MSG_TO_ALL_ADMINS: {
+                messages = Settings.SendToAllAdmins(user);
+                moreMessages = true;
+                break;
+            }
+            case APPROVE_SENDING_MSG_TO_ALL_ADMINS: {
+                messages = Settings.SendToAllAdmins(user);
+                moreMessages = true;
+                break;
+            }
+        }
+
+        if (moreMessages) {
+            for (SendMessage msg : messages) {
+                try {
+                    execute(msg);
+                } catch (TelegramApiException e) {
+                    BotLogger.log(Level.SEVERE, "Exception: ", e.toString());
+                }
+            }
+            return;
         }
 
         try {
