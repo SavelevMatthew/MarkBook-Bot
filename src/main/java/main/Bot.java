@@ -46,6 +46,16 @@ public class Bot extends TelegramLongPollingBot {
 
         SendMessage sendMessage = new SendMessage();
 
+        if("/help".equals(user.msg_text)) {
+            sendMessage = BotCommands.SendHelp(user);
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                BotLogger.log(Level.SEVERE, "Exception: ", e.toString());
+            }
+            return;
+        }
+
         switch (user.status) {
             case HELLO:
                 sendMessage = Registration.RegisterUser(user);

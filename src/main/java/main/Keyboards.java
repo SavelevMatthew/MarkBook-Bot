@@ -84,20 +84,6 @@ class Keyboards {
     }
 
     static InlineKeyboardMarkup InlineButton(CallbackQuery callbackQuery) {
-//        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-//        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-//        List<InlineKeyboardButton> row = new ArrayList<>();
-//        switch(callbackQuery.getData()) {
-//            case "hw": row.add(new InlineKeyboardButton("⬅️ Вернуться к расписанию")); break;
-//            case "tt": row.add(new InlineKeyboardButton("Домашнее задание")); break;
-//        }
-//
-//        keyboard.add(row);
-//
-//        inlineKeyboardMarkup.setKeyboard(keyboard);
-//
-//        return inlineKeyboardMarkup;
-
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         InlineKeyboardMarkup inlineKeyboardMarkup =new InlineKeyboardMarkup();
 
