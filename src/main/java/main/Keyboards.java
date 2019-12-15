@@ -20,9 +20,17 @@ class Keyboards {
         sendMessage.setReplyMarkup(replyKeyboard);
     }
 
-    static synchronized void EndRegistration(SendMessage sendMessage) {
+    static synchronized void EndRegistration(SendMessage sendMessage, boolean copy) {
         ArrayList<String> buttonTexts = new ArrayList<>();
-        buttonTexts.add("✅ Завершить заполнение расписания");
+
+        if (copy) {
+            buttonTexts.add("\uD83D\uDCD1 Скопировать расписание четной недели");
+            buttonTexts.add(" Следующий день");
+        }
+        else {
+            buttonTexts.add(" Нечетная неделя");
+        }
+        buttonTexts.add(" Завершить заполнение расписания");
 
         ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);
         sendMessage.setReplyMarkup(replyKeyboard);
@@ -37,9 +45,9 @@ class Keyboards {
         replyKeyboardMarkup.setOneTimeKeyboard(false);
         List<KeyboardRow> keyboard = new ArrayList<>();
 
-        if (backButton) { lessonsList.add("⬅️ Назад"); }
-        if (doneButton) { lessonsList.add("\uD83E\uDD37\u200D♂️ Окно"); }
-        if (noLessonButton) { lessonsList.add("✅ Готово"); }
+        if (backButton) { lessonsList.add(" Назад"); }
+        if (doneButton) { lessonsList.add("\uD83E\uDD37\u200D Окно"); }
+        if (noLessonButton) { lessonsList.add(" Готово"); }
 
         for (int i = 0; i < lessonsList.size(); i+=2){
             KeyboardRow row = new KeyboardRow();
@@ -54,14 +62,61 @@ class Keyboards {
         msg.setReplyMarkup(replyKeyboardMarkup);
     }
 
+    static synchronized void WeekDays(SendMessage msg) {
+        List<String> weekDays = List.of("ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС");
+        CreateOneRowKeyboard(msg, weekDays);
+    }
+
+    static synchronized void Weeks(SendMessage msg) {
+        List<String> weeks = List.of("Четная", "Нечетная");
+        CreateOneRowKeyboard(msg, weeks);
+    }
+
+    static synchronized void CreateOneRowKeyboard(SendMessage msg, List<String> elements) {
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
+
+        KeyboardRow row = new KeyboardRow();
+        for(String element : elements) {
+            row.add(element);
+        }
+
+        keyboard.add(row);
+        KeyboardRow rowMenu = new KeyboardRow();
+        rowMenu.add(" Вернуться в главное меню");
+        keyboard.add(rowMenu);
+
+        replyKeyboardMarkup.setKeyboard(keyboard);
+        msg.setReplyMarkup(replyKeyboardMarkup);
+    }
+
     static synchronized void MainMenu(SendMessage sendMessage, boolean isAdmin) {
         ArrayList<String> buttonTexts = new ArrayList<>();
         buttonTexts.add("Расписание на сегодня");
         buttonTexts.add("Расписание на завтра");
+        buttonTexts.add("Все домашние задания");
 
         if(isAdmin) {
-            buttonTexts.add("Добавить домашнее задание");
+            buttonTexts.add("Настройки");
         }
+
+        ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);
+        sendMessage.setReplyMarkup(replyKeyboard);
+    }
+
+    static synchronized void Settings(long userid, SendMessage sendMessage) {
+        ArrayList<String> buttonTexts = new ArrayList<>();
+        buttonTexts.add("Добавить домашнее задание");
+        buttonTexts.add("Редактировать расписание");
+        buttonTexts.add("Добавить файл");
+        buttonTexts.add("Получить код группы");
+        if (userid==409216737) {
+            buttonTexts.add("Отправить сообщение всем администраторам");
+        }
+        buttonTexts.add(" Вернуться в главное меню");
 
         ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);
         sendMessage.setReplyMarkup(replyKeyboard);
@@ -84,25 +139,11 @@ class Keyboards {
     }
 
     static InlineKeyboardMarkup InlineButton(CallbackQuery callbackQuery) {
-//        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-//        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-//        List<InlineKeyboardButton> row = new ArrayList<>();
-//        switch(callbackQuery.getData()) {
-//            case "hw": row.add(new InlineKeyboardButton("⬅️ Вернуться к расписанию")); break;
-//            case "tt": row.add(new InlineKeyboardButton("Домашнее задание")); break;
-//        }
-//
-//        keyboard.add(row);
-//
-//        inlineKeyboardMarkup.setKeyboard(keyboard);
-//
-//        return inlineKeyboardMarkup;
-
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         InlineKeyboardMarkup inlineKeyboardMarkup =new InlineKeyboardMarkup();
 
         switch (callbackQuery.getData()) {
-            case "hw": keyboardButtonsRow.add(new InlineKeyboardButton().setText("⬅️ Вернуться к расписанию").setCallbackData("tt")); break;
+            case "hw": keyboardButtonsRow.add(new InlineKeyboardButton().setText(" Вернуться к расписанию").setCallbackData("tt")); break;
             case "tt": keyboardButtonsRow.add(new InlineKeyboardButton().setText("Домашнее задание").setCallbackData("hw")); break;
         }
 

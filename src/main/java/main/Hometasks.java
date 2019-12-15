@@ -1,14 +1,23 @@
 package main;
 
+import org.telegram.telegrambots.api.methods.ParseMode;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 
 class Hometasks {
+    static SendMessage GetAllHometasks(UserInfo user) {
+        SendMessage msg = new SendMessage();
+        msg.setChatId((long)user.userId);
+        msg.setParseMode(ParseMode.MARKDOWN);
+        msg.setText("***Все домашние задания***" + Timetable.GetAllHometasks(user));
+        return msg;
+    }
+
     static SendMessage UpdateHometask(UserInfo user) {
         SendMessage msg = new SendMessage();
         msg.setChatId((long)user.userId);
         switch(user.status) {
-            case DEFAULT: {
+            case SETTINGS: {
                 msg.setText("Выбери предмет из списка:");
                 Keyboards.LessonList(user, msg, true, false, false);
                 user.status = UserStatus.GET_LESSON_NAME;
@@ -16,7 +25,7 @@ class Hometasks {
                 return msg;
             }
             case GET_LESSON_NAME: {
-                if("⬅️ Назад".equals(user.msg_text)) {
+                if(" Назад".equals(user.msg_text)) {
                     msg.setText("Главное меню");
                     user.status = UserStatus.DEFAULT;
                     SQLCommands.UpdateUserInfo(user);
@@ -36,7 +45,7 @@ class Hometasks {
                 user.status = UserStatus.DEFAULT;
                 SQLCommands.UpdateUserInfo(user);
                 Keyboards.MainMenu(msg, user.isAdmin);
-                msg.setText("✅ Домашнее задание добавлено");
+                msg.setText(" Домашнее задание добавлено");
                 return msg;
             }
         }

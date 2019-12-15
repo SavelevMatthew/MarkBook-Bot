@@ -6,9 +6,10 @@ class UserInfo {
     UserStatus status;
     String msg_text;
     String properties;
+    String groupCode;
     boolean isAdmin;
 
-    UserInfo(int id, UserStatus status, String msg_text, boolean isAdmin)
+    UserInfo(int id, UserStatus status, String msg_text, boolean isAdmin, String groupCode)
     {
         userId = id;
         int schoolId = -1;
@@ -17,7 +18,6 @@ class UserInfo {
         this.msg_text = msg_text;
         properties = "";
         this.isAdmin = isAdmin;
+        this.groupCode = groupCode;
     }
-
-
 }

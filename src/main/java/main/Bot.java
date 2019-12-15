@@ -12,8 +12,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Scanner;
@@ -46,7 +44,30 @@ public class Bot extends TelegramLongPollingBot {
 
         SendMessage sendMessage = new SendMessage();
 
+        Boolean emergencyCommand = false;
+        if("/help".equals(user.msg_text)) {
+            sendMessage = BotCommands.SendHelp(user);
+            emergencyCommand = true;
+        }
+
+        if ("/support".equals(user.msg_text)) {
+            sendMessage = BotCommands.InitCallToSupport(user);
+            emergencyCommand = true;
+        }
+
+        if (emergencyCommand) {
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                BotLogger.log(Level.SEVERE, "Exception: ", e.toString());
+            }
+            return;
+        }
+
         switch (user.status) {
+            case GET_SUPPORT_TEXT:
+                sendMessage = BotCommands.CallToSupport(user, update.getMessage().getFrom().getUserName());
+                break;
             case HELLO:
                 sendMessage = Registration.RegisterUser(user);
                 break;
@@ -88,6 +109,42 @@ public class Bot extends TelegramLongPollingBot {
                 break;
             case GET_HOMETASK:
                 sendMessage = Hometasks.UpdateHometask(user);
+                break;
+            case SETTINGS:
+                sendMessage = Settings.FromSettings(user);
+                break;
+            case EDIT_LESSON1:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_LESSON2:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_LESSON3:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_LESSON4:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_LESSON5:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_LESSON6:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_LESSON7:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_FIRSTLESSON_NUMBER:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case GET_WEEKDAY:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case CLOSE_EDITING:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case GET_WEEK_TYPE:
+                sendMessage = Timetable.EditTimetable(user);
                 break;
         }
 
