@@ -1,9 +1,18 @@
 package main;
 
+import org.telegram.telegrambots.api.methods.ParseMode;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 
 class Hometasks {
+    static SendMessage GetAllHometasks(UserInfo user) {
+        SendMessage msg = new SendMessage();
+        msg.setChatId((long)user.userId);
+        msg.setParseMode(ParseMode.MARKDOWN);
+        msg.setText("***Все домашние задания***" + Timetable.GetAllHometasks(user));
+        return msg;
+    }
+
     static SendMessage UpdateHometask(UserInfo user) {
         SendMessage msg = new SendMessage();
         msg.setChatId((long)user.userId);

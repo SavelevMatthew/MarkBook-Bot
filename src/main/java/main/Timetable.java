@@ -90,12 +90,21 @@ class Timetable {
     }
 
     static String GetHometaskByDay(UserInfo user, Message originalMsg) {
-        String [] lessons = originalMsg.getText().split("\n");
-        String result = String.format("***%s***\n___%s___", lessons[0], lessons[1]);
+        ArrayList<String> lessons = new ArrayList<>(Arrays.asList(originalMsg.getText().split("\n")));
+        return String.format("***%s***\n___%s___", lessons.get(0), lessons.get(1)) + GetHometask(user, lessons, "");
+    }
+
+    static String GetAllHometasks(UserInfo user) {
+        ArrayList<String> lessons = SQLCommands.GetLessonList(user);
+        return  GetHometask(user, lessons, "\n");
+    }
+
+    private static String GetHometask(UserInfo user, ArrayList<String> lessons, String delimiter) {
+        String result = "";
         for (String lesson: lessons) {
             String hometask = SQLCommands.GetHometask(user, lesson);
             if (!hometask.isEmpty()) {
-                result = result + String.format("\n%s\n___%s___", lesson, hometask);
+                result = result.concat(delimiter + String.format("\n%s\n___%s___", lesson, hometask));
             }
         }
         return result;
