@@ -113,6 +113,39 @@ public class Bot extends TelegramLongPollingBot {
             case SETTINGS:
                 sendMessage = Settings.FromSettings(user);
                 break;
+            case EDIT_LESSON1:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_LESSON2:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_LESSON3:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_LESSON4:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_LESSON5:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_LESSON6:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_LESSON7:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case EDIT_FIRSTLESSON_NUMBER:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case GET_WEEKDAY:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case CLOSE_EDITING:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
+            case GET_WEEK_TYPE:
+                sendMessage = Timetable.EditTimetable(user);
+                break;
         }
 
         try {

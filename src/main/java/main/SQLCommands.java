@@ -110,14 +110,15 @@ class SQLCommands {
         return Integer.toString(groupId) + '!' + groupName;
     }
 
-    static ArrayList<String> GetLessonListByWeekDay(UserInfo user, String dayOfWeek) {
+    static ArrayList<String> GetLessonListByWeekDay(UserInfo user, String dayOfWeek, boolean iseven) {
         ArrayList<String> result = new ArrayList<>();
-        String query = "select * from timetable where groupid = ? and weekday = ?";
+        String query = "select * from timetable where groupid = ? and weekday = ? and iseven = ?";
 
         try (Connection con = SQLCommands.GetSQLConnection();
              PreparedStatement pst = con.prepareStatement(query)) {
             pst.setInt(1, user.groupId);
             pst.setString(2, dayOfWeek);
+            pst.setBoolean(3, iseven);
             ResultSet rs = pst.executeQuery();
             if (rs.next()) {
                 for (int x = 4; x < 11; x++) {
@@ -195,28 +196,54 @@ class SQLCommands {
         return hometask_text;
     }
 
-    static void InitTimetableDay(UserInfo user, String weekDay, String firstlesson) {
-        String query = "INSERT INTO timetable(groupid, weekday, firstlesson) VALUES(?, ?, ?)";
+    static void InitTimetableDay(UserInfo user, String firstlesson) {
+        String query = "INSERT INTO timetable(groupid, weekday, firstlesson, iseven) VALUES(?, ?, ?, ?)";
+        String[] splitted = user.properties.split(", ");
+        String weekDay = splitted[0];
+        Boolean iseven = Boolean.valueOf(splitted[1]);
 
         try (Connection con = SQLCommands.GetSQLConnection();
              PreparedStatement pst = con.prepareStatement(query)) {
             pst.setInt(1, user.groupId);
             pst.setString(2, weekDay);
             pst.setString(3, firstlesson);
+            pst.setBoolean(4, iseven);
             pst.executeUpdate();
         } catch (SQLException ex) {
             SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 
-    static void UpdateTimetable(UserInfo user, String weekDay, int numLesson, String lesson) {
-        String query = String.format("UPDATE timetable SET lesson%d = ? WHERE groupid = ? and weekday = ?", numLesson);
+    static void EditTimetableDayFirstLesson(UserInfo user, String firstlesson) {
+        String query = "update timetable set firstlesson = ? where groupid = ? and weekday = ? and iseven = ?";
+        String[] splitted = user.properties.split(", ");
+        String weekDay = splitted[0];
+        Boolean iseven = Boolean.valueOf(splitted[1]);
+
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setString(1, firstlesson);
+            pst.setInt(2, user.groupId);
+            pst.setString(3, weekDay);
+            pst.setBoolean(4, iseven);
+            pst.executeUpdate();
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    static void UpdateTimetable(UserInfo user, int numLesson, String lesson) {
+        String query = String.format("UPDATE timetable SET lesson%d = ? WHERE groupid = ? and weekday = ? and iseven = ?", numLesson);
+        String[] splitted = user.properties.split(", ");
+        String weekDay = splitted[0];
+        Boolean iseven = Boolean.valueOf(splitted[1]);
 
         try (Connection con = SQLCommands.GetSQLConnection();
              PreparedStatement pst = con.prepareStatement(query)) {
             pst.setString(1, lesson);
             pst.setString(3, weekDay);
             pst.setInt(2, user.groupId);
+            pst.setBoolean(4, iseven);
             pst.executeUpdate();
         } catch (SQLException ex) {
             SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -258,5 +285,21 @@ class SQLCommands {
             SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return "0";
+    }
+
+    static void CopyTimetable(UserInfo user, String weekDay) {
+        String query = "INSERT INTO timetable (groupid, weekday, firstlesson, lesson1, lesson2, lesson3, lesson4, lesson5, lesson6, lesson7)\n" +
+                "  SELECT groupid, weekday, firstlesson, lesson1, lesson2, lesson3, lesson4, lesson5, lesson6, lesson7 FROM timetable\n" +
+                "    WHERE iseven=true and weekday= ? and groupid = ?;\n" +
+                "update timetable set iseven=false where iseven is null;";
+
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setString(1, weekDay);
+            pst.setInt(2, user.groupId);
+            pst.executeUpdate();
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
     }
 }

@@ -20,8 +20,16 @@ class Keyboards {
         sendMessage.setReplyMarkup(replyKeyboard);
     }
 
-    static synchronized void EndRegistration(SendMessage sendMessage) {
+    static synchronized void EndRegistration(SendMessage sendMessage, boolean copy) {
         ArrayList<String> buttonTexts = new ArrayList<>();
+
+        if (copy) {
+            buttonTexts.add("\uD83D\uDCD1 Скопировать расписание четной недели");
+            buttonTexts.add("⏩ Следующий день");
+        }
+        else {
+            buttonTexts.add("⏩ Нечетная неделя");
+        }
         buttonTexts.add("✅ Завершить заполнение расписания");
 
         ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);
@@ -50,6 +58,37 @@ class Keyboards {
 
             keyboard.add(row);
         }
+        replyKeyboardMarkup.setKeyboard(keyboard);
+        msg.setReplyMarkup(replyKeyboardMarkup);
+    }
+
+    static synchronized void WeekDays(SendMessage msg) {
+        List<String> weekDays = List.of("ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС");
+        CreateOneRowKeyboard(msg, weekDays);
+    }
+
+    static synchronized void Weeks(SendMessage msg) {
+        List<String> weeks = List.of("Четная", "Нечетная");
+        CreateOneRowKeyboard(msg, weeks);
+    }
+
+    static synchronized void CreateOneRowKeyboard(SendMessage msg, List<String> elements) {
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
+
+        KeyboardRow row = new KeyboardRow();
+        for(String element : elements) {
+            row.add(element);
+        }
+
+        keyboard.add(row);
+        KeyboardRow rowMenu = new KeyboardRow();
+        rowMenu.add("⬅️ Вернуться в главное меню");
+        keyboard.add(rowMenu);
+
         replyKeyboardMarkup.setKeyboard(keyboard);
         msg.setReplyMarkup(replyKeyboardMarkup);
     }

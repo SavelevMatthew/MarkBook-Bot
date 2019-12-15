@@ -36,9 +36,10 @@ class Registration {
         }
         String groupName = user.msg_text;
         msg.setParseMode(ParseMode.MARKDOWN);
-        msg.setText(String.format("***✅ Группа %s создана***\nЗаполняем раписание группы на ***Понедельник***.\n\nОтправь номер первой пары:", groupName));
+        msg.setText(String.format("***✅ Группа %s создана***\nЗаполняем раписание группы на ***Понедельник, четная неделя***.\n\nОтправь номер первой пары:", groupName));
         user.status = UserStatus.GET_FIRSTLESSON_NUMBER;
-        user.properties = "Понедельник";
+        user.properties = "Понедельник, true";
+        SQLCommands.UpdateUserInfo(user);
         SQLCommands.CreateNewGroup(user, groupName);
         return msg;
     }
@@ -56,6 +57,19 @@ class Registration {
             return msg;
         }
 
+        if ("\uD83D\uDCD1 Скопировать расписание четной недели".equals(user.msg_text)) {
+            String[] splitted = user.properties.split(", ");
+            String weekDay = splitted[0];
+            SQLCommands.CopyTimetable(user, weekDay);
+            SwitchUpdateTimetableToNextDay(user, msg);
+            return msg;
+        }
+
+        if ("⏩ Следующий день".equals(user.msg_text) || "⏩ Нечетная неделя".equals(user.msg_text)) {
+            SwitchUpdateTimetableToNextDay(user, msg);
+            return msg;
+        }
+
         int lessonNumber;
         try {
             lessonNumber = Integer.parseInt(user.msg_text);
@@ -70,7 +84,7 @@ class Registration {
         }
 
         user.status = UserStatus.valueOf(String.format("GET_LESSON%d", lessonNumber));
-        SQLCommands.InitTimetableDay(user, user.properties, user.msg_text);
+        SQLCommands.InitTimetableDay(user, user.msg_text);
         SQLCommands.UpdateUserInfo(user);
         msg.setText("Выбери название из списка или введи новое\nв формате эмодзи+название:\n___\uD83D\uDCBB Объектно-ориентированное программирование___\n\n***После ввода последней пары нажми ✅ Готово.*** Бот перейдет к заполнению расписания на следующий день");
         Keyboards.LessonList(user, msg, false, true, true);
@@ -98,7 +112,7 @@ class Registration {
 
         AddLessonIfNotExists(user);
 
-        SQLCommands.UpdateTimetable(user, user.properties, lessonNumber, user.msg_text);
+        SQLCommands.UpdateTimetable(user, lessonNumber, user.msg_text);
         if(lessonNumber == 7) {
             SwitchUpdateTimetableToNextDay(user, msg);
             return msg;
@@ -111,27 +125,38 @@ class Registration {
     }
 
     private static void SwitchUpdateTimetableToNextDay(UserInfo user, SendMessage msg) {
-        if("Воскресенье".equals(user.properties)) {
+        if("Воскресенье, false".equals(user.properties)) {
             user.msg_text = "✅ Завершить заполнение расписания";
             msg = SetFirstLesson(user);
         }
 
         user.status = UserStatus.GET_FIRSTLESSON_NUMBER;
         switch(user.properties) {
-            case "Понедельник": user.properties = "Вторник"; break;
-            case "Вторник": user.properties = "Среда"; break;
-            case "Среда": user.properties = "Четверг"; break;
-            case "Четверг": user.properties = "Пятница"; break;
-            case "Пятница": user.properties = "Суббота"; break;
-            case "Суббота": user.properties = "Воскресенье"; break;
+            case "Понедельник, true": user.properties = "Понедельник, false"; break;
+            case "Понедельник, false": user.properties = "Вторник, true"; break;
+            case "Вторник, true": user.properties = "Вторник, false"; break;
+            case "Вторник, false": user.properties = "Среда, true"; break;
+            case "Среда, true": user.properties = "Среда, false"; break;
+            case "Среда, false": user.properties = "Четверг, true"; break;
+            case "Четверг, true": user.properties = "Четверг, false"; break;
+            case "Четверг, false": user.properties = "Пятница, true"; break;
+            case "Пятница, true": user.properties = "Пятница, false"; break;
+            case "Пятница, false": user.properties = "Суббота, true"; break;
+            case "Суббота, true": user.properties = "Суббота, false"; break;
+            case "Суббота, false": user.properties = "Воскресенье, true"; break;
+            case "Воскресенье, true": user.properties = "Воскресенье, false"; break;
         }
 
         SQLCommands.UpdateUserInfo(user);
-        msg.setText(String.format("Заполняем раписание группы на ***%s***.\n\nОтправь номер первой пары:\n", user.properties));
-        Keyboards.EndRegistration(msg);
+        String[] splitted = user.properties.split(", ");
+        String weekDay = splitted[0];
+        Boolean iseven = Boolean.valueOf(splitted[1]);
+        String weekName = (iseven)? ", четная неделя" : ", нечетная неделя";
+        msg.setText(String.format("Заполняем раписание группы на ***%s***.\n\nОтправь номер первой пары:\n", weekDay + weekName));
+        Keyboards.EndRegistration(msg, !iseven);
     }
 
-    private static void AddLessonIfNotExists(UserInfo user) {
+    static void AddLessonIfNotExists(UserInfo user) {
         if(!"\uD83E\uDD37\u200D♂️ Окно".equals(user.msg_text) && !SQLCommands.GetLessonList(user).contains(user.msg_text)) {
             SQLCommands.AddLesson(user, user.msg_text);
         }

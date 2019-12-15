@@ -2,13 +2,12 @@ package main;
 
 import org.telegram.telegrambots.api.methods.ParseMode;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 
 public class Settings {
     static SendMessage FromSettings(UserInfo user) {
         switch(user.msg_text) {
             case "Добавить домашнее задание": return Hometasks.UpdateHometask(user);
-            case "Редактировать расписание": return BotCommands.NotImplementedYet(user);
+            case "Редактировать расписание": return Timetable.EditTimetable(user);
             case "Добавить файл": return BotCommands.NotImplementedYet(user);
             case "Получить код группы": return Settings.GetGroupCode(user);
             case "/start": return BotCommands.ReturnToMainMenu(user);
