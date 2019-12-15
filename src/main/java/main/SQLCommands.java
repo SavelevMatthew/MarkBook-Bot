@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -150,6 +151,24 @@ class SQLCommands {
         return result;
     }
 
+    static ArrayList<String> GetAdminsList() {
+        ArrayList<String> result = new ArrayList<String>();
+        String query = "select * from users where isadmin = ?";
+
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setBoolean(1, true);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                result.add(rs.getString("id"));
+            }
+
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return result;
+    }
+
     static void UpdateHometask(UserInfo user, String lesson, String hometask) {
         String query = "UPDATE hometasks SET hometask_text = ? WHERE groupid = ? AND lesson = ?";
 
@@ -251,13 +270,25 @@ class SQLCommands {
     }
 
     static void CreateNewGroup(UserInfo user, String groupName) {
+        String query = "select * from groups;";
+        int groupId = 1;
+        try (Connection con = SQLCommands.GetSQLConnection();
+             PreparedStatement pst = con.prepareStatement(query)) {
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                groupId += 1;
+            }
+        } catch (SQLException ex) {
+            SQLLogger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
         user.groupCode = CodeGenerator.generateCode(10);
-        String query = "INSERT INTO groups(groupid, groupname, groupcode) VALUES(?, ?, ?)";
+
+        query = "INSERT INTO groups(groupid, groupname, groupcode) VALUES(?, ?, ?)";
 
         try (Connection con = SQLCommands.GetSQLConnection();
              PreparedStatement pst = con.prepareStatement(query)) {
             pst.setString(2, groupName);
-            pst.setInt(1, user.groupId);
+            pst.setInt(1, groupId);
             pst.setString(3, user.groupCode);
             pst.executeUpdate();
         } catch (SQLException ex) {
@@ -265,6 +296,7 @@ class SQLCommands {
         }
 
         user.isAdmin = true;
+        user.groupId = groupId;
         UpdateUserInfo(user);
     }
 

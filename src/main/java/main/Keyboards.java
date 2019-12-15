@@ -67,6 +67,11 @@ class Keyboards {
         CreateOneRowKeyboard(msg, weekDays);
     }
 
+    static synchronized void YesNo(SendMessage msg) {
+        List<String> weekDays = List.of("", "");
+        CreateOneRowKeyboard(msg, weekDays);
+    }
+
     static synchronized void Weeks(SendMessage msg) {
         List<String> weeks = List.of("Четная", "Нечетная");
         CreateOneRowKeyboard(msg, weeks);
