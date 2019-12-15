@@ -12,8 +12,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Scanner;
@@ -46,8 +44,18 @@ public class Bot extends TelegramLongPollingBot {
 
         SendMessage sendMessage = new SendMessage();
 
+        Boolean emergencyCommand = false;
         if("/help".equals(user.msg_text)) {
             sendMessage = BotCommands.SendHelp(user);
+            emergencyCommand = true;
+        }
+
+        if ("/support".equals(user.msg_text)) {
+            sendMessage = BotCommands.InitCallToSupport(user);
+            emergencyCommand = true;
+        }
+
+        if (emergencyCommand) {
             try {
                 execute(sendMessage);
             } catch (TelegramApiException e) {
@@ -57,6 +65,9 @@ public class Bot extends TelegramLongPollingBot {
         }
 
         switch (user.status) {
+            case GET_SUPPORT_TEXT:
+                sendMessage = BotCommands.CallToSupport(user, update.getMessage().getFrom().getUserName());
+                break;
             case HELLO:
                 sendMessage = Registration.RegisterUser(user);
                 break;
