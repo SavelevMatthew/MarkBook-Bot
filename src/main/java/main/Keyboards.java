@@ -25,12 +25,12 @@ class Keyboards {
 
         if (copy) {
             buttonTexts.add("\uD83D\uDCD1 Скопировать расписание четной недели");
-            buttonTexts.add(" Следующий день");
+            buttonTexts.add("⏩ Следующий день");
         }
         else {
-            buttonTexts.add(" Нечетная неделя");
+            buttonTexts.add("⏩ Нечетная неделя");
         }
-        buttonTexts.add(" Завершить заполнение расписания");
+        buttonTexts.add("✅ Завершить заполнение расписания");
 
         ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);
         sendMessage.setReplyMarkup(replyKeyboard);
@@ -45,9 +45,9 @@ class Keyboards {
         replyKeyboardMarkup.setOneTimeKeyboard(false);
         List<KeyboardRow> keyboard = new ArrayList<>();
 
-        if (backButton) { lessonsList.add(" Назад"); }
-        if (doneButton) { lessonsList.add("\uD83E\uDD37\u200D Окно"); }
-        if (noLessonButton) { lessonsList.add(" Готово"); }
+        if (backButton) { lessonsList.add("⬅️ Назад"); }
+        if (doneButton) { lessonsList.add("\uD83E\uDD37\u200D♂️ Окно"); }
+        if (noLessonButton) { lessonsList.add("✅ Готово"); }
 
         for (int i = 0; i < lessonsList.size(); i+=2){
             KeyboardRow row = new KeyboardRow();
@@ -68,7 +68,7 @@ class Keyboards {
     }
 
     static synchronized void YesNo(SendMessage msg) {
-        List<String> weekDays = List.of("", "");
+        List<String> weekDays = List.of("✅", "❌");
         CreateOneRowKeyboard(msg, weekDays);
     }
 
@@ -91,7 +91,7 @@ class Keyboards {
 
         keyboard.add(row);
         KeyboardRow rowMenu = new KeyboardRow();
-        rowMenu.add(" Вернуться в главное меню");
+        rowMenu.add("⬅️ Вернуться в главное меню");
         keyboard.add(rowMenu);
 
         replyKeyboardMarkup.setKeyboard(keyboard);
@@ -121,7 +121,7 @@ class Keyboards {
         if (userid==409216737) {
             buttonTexts.add("Отправить сообщение всем администраторам");
         }
-        buttonTexts.add(" Вернуться в главное меню");
+        buttonTexts.add("⬅️ Вернуться в главное меню");
 
         ReplyKeyboardMarkup replyKeyboard = CreateBlankKeyboard(buttonTexts);
         sendMessage.setReplyMarkup(replyKeyboard);
@@ -148,7 +148,7 @@ class Keyboards {
         InlineKeyboardMarkup inlineKeyboardMarkup =new InlineKeyboardMarkup();
 
         switch (callbackQuery.getData()) {
-            case "hw": keyboardButtonsRow.add(new InlineKeyboardButton().setText(" Вернуться к расписанию").setCallbackData("tt")); break;
+            case "hw": keyboardButtonsRow.add(new InlineKeyboardButton().setText("⬅️ Вернуться к расписанию").setCallbackData("tt")); break;
             case "tt": keyboardButtonsRow.add(new InlineKeyboardButton().setText("Домашнее задание").setCallbackData("hw")); break;
         }
 

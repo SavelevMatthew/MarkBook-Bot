@@ -20,11 +20,11 @@ class BotCommands {
         msg.setParseMode(ParseMode.MARKDOWN);
         msg.setText("***Будь в курсе актуального расписания c @mrkbkbot\n***" +
                 "\n" +
-                " ***@mrkbkbot*** — чат-бот в Telegram, заменяющий обычный дневник\n" +
+                "✏️ ***@mrkbkbot*** — чат-бот в Telegram, заменяющий обычный дневник\n" +
                 "\n" +
                 "\uD83D\uDCCB Чтобы посмотреть расписание, просто нажми на кнопку ***«Расписание на сегодня»***\n" +
                 "\uD83E\uDDEE Сохраняй домашние задания и смотри их в расписании\n" +
-                " В разделе ***«Настройки»*** можно отредактировать расписание и получить код, чтобы расшарить доступ к твоей группе\n" +
+                "⚙️ В разделе ***«Настройки»*** можно отредактировать расписание и получить код, чтобы расшарить доступ к твоей группе\n" +
                 "\n" +
                 "___Проблемы с ботом? Отправь запрос разработчикам командой /support___");
         msg.setChatId((long) user.userId);
@@ -67,7 +67,7 @@ class BotCommands {
     static SendMessage NotImplementedYet(UserInfo user) {
         SendMessage msg = new SendMessage();
         msg.setParseMode(ParseMode.MARKDOWN);
-        msg.setText("\uD83E\uDD37\u200D Эта функция пока не реализована, но скоро появится");
+        msg.setText("\uD83E\uDD37\u200D♂️ Эта функция пока не реализована, но скоро появится");
         msg.setChatId((long) user.userId);
         return msg;
     }

@@ -123,7 +123,7 @@ class Timetable {
     }
 
     static SendMessage EditTimetable(UserInfo user) {
-        if (" Вернуться в главное меню".equals(user.msg_text)) {
+        if ("⬅️ Вернуться в главное меню".equals(user.msg_text)) {
             return  BotCommands.ReturnToMainMenu(user);
         }
 
@@ -161,12 +161,12 @@ class Timetable {
                 try {
                     lessonNumber = Integer.parseInt(user.msg_text);
                 } catch (NumberFormatException a) {
-                    msg.setText("***Номер первой пары — это число от 1 до 7***\nОтправь номер первой пары ещё раз:");
+                    msg.setText("***⚠️Номер первой пары — это число от 1 до 7***\nОтправь номер первой пары ещё раз:");
                     return msg;
                 }
 
                 if (lessonNumber > 7 || lessonNumber < 1) {
-                    msg.setText("***Номер первой пары — это число от 1 до 7***\nОтправь номер первой пары ещё раз:");
+                    msg.setText("***⚠️Номер первой пары — это число от 1 до 7***\nОтправь номер первой пары ещё раз:");
                     return msg;
                 }
 
@@ -182,7 +182,7 @@ class Timetable {
                     SQLCommands.EditTimetableDayFirstLesson(user, user.msg_text);
                 }
 
-                msg.setText("Выбери название из списка или введи новое\nв формате эмодзи+название:\n___\uD83D\uDCBB Объектно-ориентированное программирование___\n\n***После ввода последней пары нажми  Готово.*** Бот перейдет к заполнению расписания на следующий день");
+                msg.setText("Выбери название из списка или введи новое\nв формате эмодзи+название:\n___\uD83D\uDCBB Объектно-ориентированное программирование___\n\n***После ввода последней пары нажми ✅ Готово.*** Бот перейдет к заполнению расписания на следующий день");
                 Keyboards.LessonList(user, msg, false, true, true);
                 SQLCommands.UpdateUserInfo(user);
 
@@ -190,7 +190,7 @@ class Timetable {
             }
         }
 
-        if (" Готово".equals(user.msg_text) || user.status == UserStatus.CLOSE_EDITING) {
+        if ("✅ Готово".equals(user.msg_text) || user.status == UserStatus.CLOSE_EDITING) {
             user.status = UserStatus.DEFAULT;
             msg.setText("\uD83D\uDC4C\uD83C\uDFFB Редактирование расписания завершено");
             Keyboards.MainMenu(msg, user.isAdmin);

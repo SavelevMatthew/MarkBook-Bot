@@ -14,7 +14,7 @@ public class Settings {
             case "Добавить файл": return BotCommands.NotImplementedYet(user);
             case "Получить код группы": return Settings.GetGroupCode(user);
             case "/start": return BotCommands.ReturnToMainMenu(user);
-            case " Вернуться в главное меню": return BotCommands.ReturnToMainMenu(user);
+            case "⬅️ Вернуться в главное меню": return BotCommands.ReturnToMainMenu(user);
         }
         return new SendMessage();
     }
@@ -31,7 +31,7 @@ public class Settings {
             return msg;
         }
 
-        msg.setText(" Настройки доступны только администраторам групп");
+        msg.setText("⚠️ Настройки доступны только администраторам групп");
         return msg;
     }
 
@@ -39,7 +39,7 @@ public class Settings {
         SendMessage msg = new SendMessage();
         msg.setChatId((long)user.userId);
         msg.setParseMode(ParseMode.MARKDOWN);
-        msg.setText("***\uD83D\uDE4B\u200D Пригласите друзей в свою группу!\n***" +
+        msg.setText("***\uD83D\uDE4B\u200D♂️ Пригласите друзей в свою группу!\n***" +
                 "\n" +
                 "Попросите указать код вашей группы во время регистрации :\n" +
                 String.format("```%s```", user.groupCode));
@@ -60,31 +60,17 @@ public class Settings {
             case GET_MSG_TO_ALL_ADMINS: {
                 user.properties = user.msg_text;
                 user.status = UserStatus.APPROVE_SENDING_MSG_TO_ALL_ADMINS;
-                msg.setText(" Отправить сообщение ***всем администраторам***?");
+                msg.setText("⚠️ Отправить сообщение ***всем администраторам***?");
                 Keyboards.YesNo(msg);
                 SQLCommands.UpdateUserInfo(user);
                 return List.of(msg);
             }
             case APPROVE_SENDING_MSG_TO_ALL_ADMINS: {
-                if ("".equals(user.msg_text)) {
-                    msg.setText("\uD83D\uDC4C\uD83C\uDFFB Отменено");
-                    user.status = UserStatus.SETTINGS;
-                    user.properties = "";
-                    SQLCommands.UpdateUserInfo(user);
-                    Keyboards.Settings(user.userId, msg);
-                    return List.of(msg);
-                } else if (" Вернуться в главное меню".equals(user.msg_text)) {
-                    msg.setText("\uD83D\uDC4C\uD83C\uDFFB Отменено");
-                    user.status = UserStatus.DEFAULT;
-                    user.properties = "";
-                    SQLCommands.UpdateUserInfo(user);
-                    Keyboards.MainMenu(msg, user.isAdmin);
-                    return List.of(msg);
-                } else {
+                if ("✅".equals(user.msg_text)) {
                     ArrayList<SendMessage> result = new ArrayList<>();
                     msg.setChatId((long)user.userId);
                     user.status = UserStatus.SETTINGS;
-                    msg.setText(" Отправлено");
+                    msg.setText("✅ Отправлено");
                     Keyboards.Settings(user.userId, msg);
                     result.add(msg);
 
@@ -95,6 +81,20 @@ public class Settings {
                     SQLCommands.UpdateUserInfo(user);
                     user.properties = "";
                     return result;
+                } else if ("⬅️ Вернуться в главное меню".equals(user.msg_text)) {
+                    msg.setText("\uD83D\uDC4C\uD83C\uDFFB Отменено");
+                    user.status = UserStatus.DEFAULT;
+                    user.properties = "";
+                    SQLCommands.UpdateUserInfo(user);
+                    Keyboards.MainMenu(msg, user.isAdmin);
+                    return List.of(msg);
+                } else {
+                    msg.setText("\uD83D\uDC4C\uD83C\uDFFB Отменено");
+                    user.status = UserStatus.SETTINGS;
+                    user.properties = "";
+                    SQLCommands.UpdateUserInfo(user);
+                    Keyboards.Settings(user.userId, msg);
+                    return List.of(msg);
                 }
             }
         }

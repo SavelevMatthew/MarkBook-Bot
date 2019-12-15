@@ -36,7 +36,7 @@ class Registration {
         }
         String groupName = user.msg_text;
         msg.setParseMode(ParseMode.MARKDOWN);
-        msg.setText(String.format("*** Группа %s создана***\nЗаполняем раписание группы на ***Понедельник, четная неделя***.\n\nОтправь номер первой пары:", groupName));
+        msg.setText(String.format("***✅ Группа %s создана***\nЗаполняем раписание группы на ***Понедельник, четная неделя***.\n\nОтправь номер первой пары:", groupName));
         user.status = UserStatus.GET_FIRSTLESSON_NUMBER;
         user.properties = "Понедельник, true";
         SQLCommands.UpdateUserInfo(user);
@@ -48,7 +48,7 @@ class Registration {
         SendMessage msg = new SendMessage();
         msg.setParseMode(ParseMode.MARKDOWN);
         msg.setChatId((long)user.userId);
-        if(" Завершить заполнение расписания".equals(user.msg_text))
+        if("✅ Завершить заполнение расписания".equals(user.msg_text))
         {
             user.status = UserStatus.DEFAULT;
             SQLCommands.UpdateUserInfo(user);
@@ -65,7 +65,7 @@ class Registration {
             return msg;
         }
 
-        if (" Следующий день".equals(user.msg_text) || " Нечетная неделя".equals(user.msg_text)) {
+        if ("⏩ Следующий день".equals(user.msg_text) || "⏩ Нечетная неделя".equals(user.msg_text)) {
             SwitchUpdateTimetableToNextDay(user, msg);
             return msg;
         }
@@ -74,19 +74,19 @@ class Registration {
         try {
             lessonNumber = Integer.parseInt(user.msg_text);
         } catch(NumberFormatException a) {
-            msg.setText("***Номер первой пары — это число от 1 до 7***\nОтправь номер первой пары ещё раз:");
+            msg.setText("***⚠️Номер первой пары — это число от 1 до 7***\nОтправь номер первой пары ещё раз:");
             return  msg;
         }
 
         if (lessonNumber > 7 || lessonNumber < 1) {
-            msg.setText("***Номер первой пары — это число от 1 до 7***\nОтправь номер первой пары ещё раз:");
+            msg.setText("***⚠️Номер первой пары — это число от 1 до 7***\nОтправь номер первой пары ещё раз:");
             return  msg;
         }
 
         user.status = UserStatus.valueOf(String.format("GET_LESSON%d", lessonNumber));
         SQLCommands.InitTimetableDay(user, user.msg_text);
         SQLCommands.UpdateUserInfo(user);
-        msg.setText("Выбери название из списка или введи новое\nв формате эмодзи+название:\n___\uD83D\uDCBB Объектно-ориентированное программирование___\n\n***После ввода последней пары нажми  Готово.*** Бот перейдет к заполнению расписания на следующий день");
+        msg.setText("Выбери название из списка или введи новое\nв формате эмодзи+название:\n___\uD83D\uDCBB Объектно-ориентированное программирование___\n\n***После ввода последней пары нажми ✅ Готово.*** Бот перейдет к заполнению расписания на следующий день");
         Keyboards.LessonList(user, msg, false, true, true);
         return msg;
     }
@@ -95,7 +95,7 @@ class Registration {
         SendMessage msg = new SendMessage();
         msg.setChatId((long)user.userId);
         msg.setParseMode(ParseMode.MARKDOWN);
-        if (" Готово".equals(user.msg_text)) {
+        if ("✅ Готово".equals(user.msg_text)) {
             SwitchUpdateTimetableToNextDay(user, msg);
             return msg;
         }
@@ -126,7 +126,7 @@ class Registration {
 
     private static void SwitchUpdateTimetableToNextDay(UserInfo user, SendMessage msg) {
         if("Воскресенье, false".equals(user.properties)) {
-            user.msg_text = " Завершить заполнение расписания";
+            user.msg_text = "✅ Завершить заполнение расписания";
             msg = SetFirstLesson(user);
         }
 
@@ -157,7 +157,7 @@ class Registration {
     }
 
     static void AddLessonIfNotExists(UserInfo user) {
-        if(!"\uD83E\uDD37\u200D Окно".equals(user.msg_text) && !SQLCommands.GetLessonList(user).contains(user.msg_text)) {
+        if(!"\uD83E\uDD37\u200D♂️ Окно".equals(user.msg_text) && !SQLCommands.GetLessonList(user).contains(user.msg_text)) {
             SQLCommands.AddLesson(user, user.msg_text);
         }
     }
@@ -189,9 +189,11 @@ class Registration {
         user.status = UserStatus.DEFAULT;
         String groupName = splitted[1];
 
-        msg.setText(String.format(" Ты добавлен в группу %s", groupName));
+        msg.setText(String.format("✅ Ты добавлен в группу %s", groupName));
         Keyboards.MainMenu(msg, user.isAdmin);
         SQLCommands.UpdateUserInfo(user);
         return msg;
     }
 }
+
+

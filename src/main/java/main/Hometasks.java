@@ -25,7 +25,7 @@ class Hometasks {
                 return msg;
             }
             case GET_LESSON_NAME: {
-                if(" Назад".equals(user.msg_text)) {
+                if("⬅️ Назад".equals(user.msg_text)) {
                     msg.setText("Главное меню");
                     user.status = UserStatus.DEFAULT;
                     SQLCommands.UpdateUserInfo(user);
@@ -45,7 +45,7 @@ class Hometasks {
                 user.status = UserStatus.DEFAULT;
                 SQLCommands.UpdateUserInfo(user);
                 Keyboards.MainMenu(msg, user.isAdmin);
-                msg.setText(" Домашнее задание добавлено");
+                msg.setText("✅ Домашнее задание добавлено");
                 return msg;
             }
         }
