@@ -82,7 +82,7 @@ class Timetable {
         String result = String.format("***%s***\n___%s___", lessons[0], lessons[1]);
         for (String lesson: lessons) {
             String hometask = SQLCommands.GetHometask(user, lesson);
-            if (!"".equals(hometask)) {
+            if (!hometask.isEmpty()) {
                 result = result + String.format("\n%s\n___%s___", lesson, hometask);
             }
         }
